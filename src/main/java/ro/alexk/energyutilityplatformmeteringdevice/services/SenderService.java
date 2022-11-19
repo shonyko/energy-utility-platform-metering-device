@@ -77,7 +77,7 @@ public class SenderService implements CommandLineRunner {
             rabbitTemplate.convertAndSend(mqConfig.exchange(), mqConfig.routingKey(), data);
             log.info("Sent: " + measurement);
         } catch (AmqpException e) {
-            log.error("Could not send message to the queue.");
+            log.error("Could not send message to the queue: " + e.getMessage());
         }
     }
 }
