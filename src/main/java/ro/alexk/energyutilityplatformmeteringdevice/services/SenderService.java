@@ -15,7 +15,7 @@ import ro.alexk.energyutilityplatformmeteringdevice.models.Measurement;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.time.Instant;
+import java.time.ZonedDateTime;
 import java.util.concurrent.TimeUnit;
 
 @Slf4j
@@ -34,6 +34,7 @@ public class SenderService implements CommandLineRunner {
 
         try (var reader = new BufferedReader(new InputStreamReader(deviceConfig.data().getInputStream()))) {
             String line;
+            int lineNb = 0;
             while ((line = reader.readLine()) != null) {
                 double measurementValue;
 
@@ -44,12 +45,18 @@ public class SenderService implements CommandLineRunner {
                     continue;
                 }
 
-                var timestamp = Instant.now().toEpochMilli();
+                var date = ZonedDateTime.now();
+                date = date.minusHours(date.getHour());
+                date = date.plusHours(lineNb);
+
+                var timestamp = date.toInstant().toEpochMilli();
 
                 var measurement = new Measurement(timestamp, deviceConfig.id(), measurementValue);
                 send(measurement);
 
                 TimeUnit.MILLISECONDS.sleep(deviceConfig.delay());
+                lineNb++;
+                if(lineNb >= 24) break;
             }
         } catch (IOException e) {
             log.error("Data file could not be found.");
