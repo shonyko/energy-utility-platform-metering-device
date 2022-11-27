@@ -9,7 +9,7 @@ import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
 public class EnergyUtilityPlatformMeteringDeviceApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(EnergyUtilityPlatformMeteringDeviceApplication.class, args);
+        SpringApplication.run(EnergyUtilityPlatformMeteringDeviceApplication.class, args).close();
     }
 
 }
